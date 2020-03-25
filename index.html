@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Homer and donut</title>
+    <style>
+        body
+        {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .container
+        {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            cursor: url('donut.png'), wait;
+        }
+
+        .homer
+        {
+            width: 400px;
+            height: 400px;
+            background: url(homer.png);
+            display: flex;
+            position: relative;
+        }
+
+        .eyes-closed
+        {
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            top: 0;
+            left: 0;
+            background: #F7D92D;
+            z-index: -1;
+            display: none;
+        }
+
+        .eye
+        {
+            width: 30px;
+            height: 30px;
+            position: relative;
+            /*background: rgba(1,1,1,.1);*/
+            margin: 88px 0 0 185px;
+            display: inline-block;
+            z-index: -2;
+        }
+
+        .eye:nth-child(2)
+        {
+            margin-left: 18px;
+        }
+
+        .apple-eye
+        {
+            width: 10px;
+            height: 10px;
+            background: #000000;
+            position: absolute;
+            border-radius: 50%;
+            left: 20px;
+            top: 10px;
+            z-index: -2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="homer">
+            <div class="eye"><div class="apple-eye"></div></div>
+            <div class="eye"><div class="apple-eye"></div></div>
+            <div class="eyes-closed"></div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        
+        // получаем координаты центра 
+        const xC = document.body.clientWidth/2,
+            yC = document.body.clientHeight/2;
+
+        // функция получения угла исходя из координат мыши
+        const getAngle = (x,y) => 
+        {
+            return (x>=0) ? Math.atan(y/x)/Math.PI*180 : (Math.PI + Math.atan(y/x))/Math.PI*180;
+        }
+
+        // функция получения рандомного числа с диаапазона min max
+        const getRandInt = (min, max) =>
+        {
+            const rand = min - 0.5 + Math.random() * (max - min + 1);
+            return Math.round(rand);
+        }
+
+        const eyes = document.querySelector('.eyes-closed');
+
+        // асинхронное моргание
+        const runloop = async () =>
+        {
+
+            while (true) 
+            {
+
+                await new Promise( resolve => setTimeout(resolve, getRandInt(2, 7) * 1000));
+
+                eyes.style.display = 'block';
+
+                await new Promise( resolve => setTimeout(resolve, 200));
+
+                eyes.style.display = 'none';
+            }
+        }
+
+        runloop()
+        
+        // событие вызываемое при движении мыши
+        document.onmousemove = function(e)
+        {
+            // поскольку мы меняем курсор на изображение, нужно учесть его центр чтобы наш гомер смотрел именно на пончик
+            let x = e.x + 40,
+                y = e.y + 38;
+
+            // чтобы наши х и у считались относительно центра делаем следующие манипляции
+            x -= xC;
+            y -= yC - 94; // центр глаз находинся чуть выше, учитываем это смещение
+
+            // получаем угол и задаем нашему глазу свойство transform rotate()
+            let angle = getAngle(x,y);
+            document.querySelector(".eye").style.transform = `rotate(${angle}deg)`;
+
+            // Прежде чем проделать туже манипуляцию со вторым клазом, учитываем координаты его центра
+            angle = getAngle(x-47,y);
+            document.querySelector(".eye:nth-child(2)").style.transform = `rotate(${angle}deg)`;
+        }  
+
+    </script>
+</body>
+</html>
