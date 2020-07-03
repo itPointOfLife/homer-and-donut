@@ -2,4 +2,4 @@
 
 https://itpointoflife.github.io/homer-and-donut/index.html
 
-https://t.me/it_original
+https://t.me/it_original/29
